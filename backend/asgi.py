@@ -24,7 +24,8 @@ application=ProtocolTypeRouter({
     'http':get_asgi_application(),   # For normal HTTP requests
 
     "websocket":AuthMiddlewareStack(        
-    URLRouter(websocket_urlpatterns)   # For WebSocket connections
-    ),
+        URLRouter(
+            websocket_urlpatterns)   # For WebSocket connections
+        ),
 
 })

@@ -130,25 +130,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-
-# Celery settings
+ 
+# Celery
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/1"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30
 
-
-
-REDIS_URL = "redis://127.0.0.1:6379"
-
+# Channels
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("localhost", 6379)],
+            "hosts": [("127.0.0.1", 6379)],
         },
     },
 }
+
+# Redis for caching stock prices (optional)
+REDIS_URL = "redis://127.0.0.1:6379/2"
 
 
  

@@ -1,6 +1,8 @@
 from django.urls import path
-from .consumers import LiveStockConsumer
+from core.consumers import LiveStockConsumer
 
 websocket_urlpatterns = [
-    path('ws/test/',LiveStockConsumer.as_asgi())
+    path("ws/stocks/", LiveStockConsumer.as_asgi()),
 ]
+
+

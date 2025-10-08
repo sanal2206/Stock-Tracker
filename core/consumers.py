@@ -1,6 +1,5 @@
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from asgiref.sync import async_to_sync
+from channels.generic.websocket import AsyncWebsocketConsumer  
 from .tasks import fetch_stocks_task
 import asyncio
 
@@ -11,10 +10,9 @@ class LiveStockConsumer(AsyncWebsocketConsumer):
         self.symbols = []
 
     async def disconnect(self, close_code):
-    # Leave all symbol groups
+        # Leave all groups
         for symbol in getattr(self, "symbols", []):
             await self.channel_layer.group_discard(f"symbol_{symbol}", self.channel_name)
-
 
     async def receive(self, text_data):
         data = json.loads(text_data)
@@ -25,20 +23,20 @@ class LiveStockConsumer(AsyncWebsocketConsumer):
 
         self.symbols = symbols
 
-
         # Join groups for each symbol
         for symbol in symbols:
             await self.channel_layer.group_add(f"symbol_{symbol}", self.channel_name)
 
-        # Start periodic Celery fetch
+        # Start periodic fetch
         asyncio.create_task(self.periodic_fetch())
 
     async def periodic_fetch(self):
         while True:
-            # Assign Celery task for this user's symbols
-            async_to_sync(fetch_stocks_task.delay)(self.symbols, self.channel_name)
+            # Call Celery task
+            fetch_stocks_task.delay(self.symbols, self.channel_name)
             await asyncio.sleep(5)
 
     async def send_stock_update(self, event):
-        # Receive updates from Celery
+        # Send updates to WebSocket
         await self.send(text_data=json.dumps(event["data"]))
+
